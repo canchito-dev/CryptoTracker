@@ -1,6 +1,6 @@
 import os
-from dotenv import Dotenv
-dotenv = Dotenv(os.path.join(os.path.dirname(__file__), "default.env"))
+from dotenv import dotenv_values
+dotenv = dotenv_values(os.path.join(os.path.dirname(__file__), "default.env"))
 os.environ.update(dotenv)
 
 #timers in seconds

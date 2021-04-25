@@ -1,0 +1,46 @@
+version: '3.9'
+services:
+  elasticsearch-bigbuy-mvp:
+    hostname: elasticsearch-bigbuy-mvp
+    image: docker.elastic.co/elasticsearch/elasticsearch:7.12.0
+    container_name: elasticsearch-bigbuy-mvp
+    ports:
+      - 9300:9300
+      - 9200:9200
+    volumes:
+      - data_es_bigbuy_mvp:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/plug-in/:/usr/share/elasticsearch/plug-in
+      - ./elasticsearch/snapshot/:/usr/share/elasticsearch/snapshot
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch-bigbuy-mvp-node
+      - path.repo=/usr/share/elasticsearch/snapshot
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic-bigbuy-mvp-service-network
+
+  kibana-bigbuy-mvp:
+    hostname: kibana-bigbuy-mvp
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    container_name: kibana-bigbuy-mvp
+    ports:
+      - 5601:5601
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - SERVER_NAME=kibana-bigbuy-mvp-node
+    networks:
+      - elastic-bigbuy-mvp-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-bigbuy-mvp-service-network:
+    driver: bridge
+    name: bigbuy-mvp-network
+
+# Volumes
+volumes:
+  data_es_bigbuy_mvp:
+    driver: local

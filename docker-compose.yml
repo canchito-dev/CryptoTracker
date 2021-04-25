@@ -1,31 +1,52 @@
-version: "2.0"
+version: "3.9"
 services:
-    elasticsearch:
-      build: elasticsearch/
-      volumes:
-        - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-#        - ./elasticsearch/data:/usr/share/elasticsearch/data
-      ports:
-        - "9200:9200"
-        - "9300:9300"
-      restart: always
-      environment:
-        ES_JAVA_OPTS: "-Xmx256m -Xms256m"
+  elasticsearch:
+    build: elasticsearch/
+    hostname: elasticsearch-cryto-tracker
+    container_name: elasticsearch-cryto-tracker
+    volumes:
+      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+      - data_es_cryto_tracker:/usr/share/elasticsearch/data:rw
+    ports:
+      - 9200:9200
+      - 9300:9300
+    restart: always
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    networks:
+      - elastic-cryto-tracker-service-network
 
-    kibana:
-      build: kibana/
-      volumes:
-        - ./kibana/config/:/usr/share/kibana/config
-      ports:
-        - "5601:5601"
-      links:
-        - elasticsearch
-      restart: always
+  kibana:
+    build: kibana/
+    hostname: kibana-cryto-tracker
+    container_name: kibana-cryto-tracker
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ./kibana/config/:/usr/share/kibana/config
+    ports:
+      - 5601:5601
+    restart: always
+    networks:
+      - elastic-cryto-tracker-service-network
 
-    app:
-      build: app/
-      depends_on:
-        - elasticsearch
-      links:
-        - elasticsearch
-      restart: always
+  app:
+    build: app/
+    depends_on:
+      - elasticsearch
+    restart: always
+    networks:
+      - elastic-cryto-tracker-service-network
+
+# Networks to be created to facilitate communication between containers
+networks:
+  elastic-cryto-tracker-service-network:
+    driver: bridge
+    name: cryto-tracker-network
+
+# Volumes
+volumes:
+  data_es_cryto_tracker:
+    driver: local

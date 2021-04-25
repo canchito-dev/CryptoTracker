@@ -13,7 +13,7 @@ from public.gemini import Gemini_Market
 from public.kraken import Kraken_Market
 from public.okcoin import OKCoin_Market
 from public.poloniex import Poloniex_Market
-from dotenv import Dotenv
+from dotenv import dotenv_values
 from time import sleep
 import logging
 import schedule
