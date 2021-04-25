@@ -6,12 +6,12 @@ Pull Requests welcome and encouraged.
 
 # Supported Exchanges
  1. [BitFinex](https://bitfinex.com/)
- 2. [BitTrex](https://bittrex.com/)
+ 2. [BitTrex](https://bittrex.com/) => Removed as the REST API has changed
  3. [Bitmex](https://bitmex.com/)
  4. [GDAX](https://gdax.com)
  5. [Gemini](https://gemini.com)
  6. [Kraken](https://kraken.com)
- 7. [OKCoin](https://www.okcoin.com/)
+ 7. [OKCoin](https://www.okcoin.com/) => Removed as the REST API has changed
  8. [Poloniex](https://poloniex.com)
  9. [BitMex](https://www.bitmex.com)
 
@@ -32,7 +32,7 @@ Pull Requests welcome and encouraged.
 ```js
 docker-compose build && docker-compose up
 ```
-This command will build and launch 3 docker containers: Elasticsearch, Kibana, and python2.7. Elasticsearch is used as our datastore, Kibana is used to setup visualizations and dashboards, and python2.7 operates our application. Elasticsearch and Kibana are customizable via .yml and Dockerfiles (included), and python2.7 is automatically configured for you to run after an initial setup delay. Once the system loads, which could take a few minutes, you should be able to navigate to Kibana to see all of the data that's flowing from the exchanges into Elasticsearch.
+This command will build and launch 3 docker containers: Elasticsearch, Kibana, and python:3.6.12. Elasticsearch is used as our datastore, Kibana is used to setup visualizations and dashboards, and python:3.6.12 operates our application. Elasticsearch and Kibana are customizable via .yml and Dockerfiles (included), and python:3.6.12 is automatically configured for you to run after an initial setup delay. Once the system loads, which could take a few minutes, you should be able to navigate to Kibana to see all of the data that's flowing from the exchanges into Elasticsearch.
 
 http://localhost:5601/
 
@@ -45,6 +45,7 @@ btc.*.ticker
 ```
 
  A json file containing saved objects and dashboards is provided under /resources. This file can be imported from Kibana's UI by navigating to Management->Saved Objects->Import. Auto-Refresh interval on all dashboard has been preconfigured for 5 seconds.
+> Originally, you could import json file. But now, if you imported, you will be requested to specify the indexes. Use the ndjson instead.
 
 # Production Settings
  On a live system, vm_map_max_count should be permanently set in /etc/sysctl.conf:

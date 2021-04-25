@@ -1,52 +1,57 @@
-version: "3.9"
+version: '3.9'
 services:
   elasticsearch:
     build: elasticsearch/
-    hostname: elasticsearch-cryto-tracker
-    container_name: elasticsearch-cryto-tracker
-    volumes:
-      - ./elasticsearch/config/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
-      - data_es_cryto_tracker:/usr/share/elasticsearch/data:rw
+    hostname: crypto-tracker_elasticsearch
+    container_name: crypto-tracker_elasticsearch
     ports:
-      - 9200:9200
       - 9300:9300
-    restart: always
+      - 9200:9200
+    volumes:
+      - data_es_crypto_tracker:/usr/share/elasticsearch/data:rw
+      - ./elasticsearch/plug-in/:/usr/share/elasticsearch/plug-in
+      - ./elasticsearch/snapshot/:/usr/share/elasticsearch/snapshot
+    environment:
+      - discovery.type=single-node
+      - node.name=elasticsearch-node
+      - path.repo=/usr/share/elasticsearch/snapshot
     ulimits:
       memlock:
         soft: -1
         hard: -1
     networks:
-      - elastic-cryto-tracker-service-network
+      - elastic-service-network
 
   kibana:
     build: kibana/
-    hostname: kibana-cryto-tracker
-    container_name: kibana-cryto-tracker
-    depends_on:
-      - elasticsearch
-    volumes:
-      - ./kibana/config/:/usr/share/kibana/config
+    hostname: crypto-tracker_kibana
+    image: docker.elastic.co/kibana/kibana:7.12.0
+    container_name: crypto-tracker_kibana
     ports:
       - 5601:5601
-    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=${ELASTICSEARCH_HOSTS}
+      - SERVER_NAME=kibana-node
     networks:
-      - elastic-cryto-tracker-service-network
+      - elastic-service-network
 
   app:
     build: app/
+    hostname: crypto-tracker_app
+    container_name: crypto-tracker_app
     depends_on:
       - elasticsearch
     restart: always
     networks:
-      - elastic-cryto-tracker-service-network
+      - elastic-service-network
 
 # Networks to be created to facilitate communication between containers
 networks:
-  elastic-cryto-tracker-service-network:
+  elastic-service-network:
     driver: bridge
-    name: cryto-tracker-network
+    name: crypto-tracker-network
 
 # Volumes
 volumes:
-  data_es_cryto_tracker:
+  data_es_crypto_tracker:
     driver: local
