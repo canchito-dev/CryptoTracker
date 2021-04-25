@@ -31,14 +31,14 @@ def main():
 
     sleep(settings.INITIAL_SLEEP)
     logging.info('Application Started.')
-    #supported_exchanges = [BitFinex_Market(), BitMex_Market(), BitTrex_Market(), GDAX_Market(), Gemini_Market(), Kraken_Market(), OKCoin_Market(), Poloniex_Market()]
-    exchanges = [BitFinex_Market(), BitMex_Market(), BitTrex_Market(), GDAX_Market(), Gemini_Market(), Kraken_Market(), OKCoin_Market(), Poloniex_Market()]
+    #supported_exchanges = [BitFinex_Market(), BitMex_Market(), -BitTrex_Market(), GDAX_Market(), Gemini_Market(), Kraken_Market(), -OKCoin_Market(), Poloniex_Market()]
+    exchanges = [BitFinex_Market(), BitMex_Market(), GDAX_Market(), Gemini_Market(), Kraken_Market(), Poloniex_Market()]
 
 
     #print active exchanges and create indexes in kibana based on products listed in each market
     for exchange in exchanges:
         logging.info(exchange.exchange + ': activated and indexed.')
-        for product, kibana_index in exchange.products.iteritems():
+        for product, kibana_index in exchange.products.items():
             utils.create_index(es, kibana_index)
 
     logging.warn('Initiating Market Tracking.')
